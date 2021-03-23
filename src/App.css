@@ -1,0 +1,19 @@
+@font-face {
+  font-family: "Roboto";
+  src: url('./assets/Roboto/Roboto-Regular.ttf');
+}
+
+@font-face {
+  font-family: "Roboto-Bold";
+  src: url('./assets/Roboto/Roboto-Bold.ttf');
+}
+
+body{
+  font: 400 14px Roboto, sans-serif;
+  background: #f0f0f5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.App {
+  height: 100vh;
+}

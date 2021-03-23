@@ -1,0 +1,52 @@
+.containerLogin {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.logo{
+    margin-top: -150px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    width: 66%;
+}
+
+.logo-title{
+    flex: 1;
+    font-family: "Roboto-Bold";
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+
+.logo-img{
+    margin-right: 15px;
+}
+
+.line {
+    flex: 1;
+    width: 100%;
+    margin-bottom: 10px
+}
+
+.line-botao  {
+    display: flex;
+    flex-direction: row;
+    margin-top: 15px;
+}
+
+.line-botao > button{
+    flex: 1;
+}
+
+.line-botao > button:first-child {
+    flex: 1;
+    margin-right: 5px;
+}
+
+.line-botao > button:last-child {
+    flex: 1;
+    margin-left: 10px;
+}
