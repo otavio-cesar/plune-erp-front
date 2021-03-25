@@ -7,6 +7,7 @@ import { MeuAlerta } from "../../components/meuAlerta";
 import { useHistory } from 'react-router-dom';
 import Loading from '../../components/loading/index';
 import { getPossibleStageSituation } from "../../services/stage";
+import logo from '../../assets/logo1.jpg';
 
 export default function LoginPage(props) {
     const [username, setUsername] = useState('');
@@ -18,7 +19,7 @@ export default function LoginPage(props) {
 
     async function handleLogin(e) {
         e.preventDefault();
-
+        
         setLoading(true)
         let res = await login(username, password)
         setLoading(false)
@@ -56,8 +57,9 @@ export default function LoginPage(props) {
 
             <Container className="containerLogin" maxWidth="sm">
                 <div className="logo">
-                    <FaIndustry className="logo-img" size={50} color="#3f51b5" />
-                    <span className="logo-title">Controle de Ordens de Produção</span>
+                    {/* <FaIndustry className="logo-img" size={50} color="#3f51b5" />
+                    <span className="logo-title">Controle de Ordens de Produção</span> */}
+                    <img src={logo} />
                 </div>
                 <form autoComplete="off" onSubmit={handleLogin} >
                     <TextField className="line" id="standard-basic" label="Usuário/Email" required value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} />

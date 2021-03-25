@@ -1,5 +1,5 @@
-//export const urlAPI = 'http://192.168.0.104:8000/';
-export const urlAPI = 'https://mysterious-forest-14010.herokuapp.com/';
+export const urlAPI = 'http://192.168.0.104:8000/';
+// export const urlAPI = 'https://mysterious-forest-14010.herokuapp.com/';
 
 export const stageSituation = {
     started: { id: 30, value: "Iniciado" },
