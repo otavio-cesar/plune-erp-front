@@ -32,7 +32,13 @@
     padding: 10px;
 }
 
-/* button {
+button {
     width: 14vh !important;
     font-size: 1.8vh !important;
-} */
+}
+
+.labelOP{
+    align-self: center;
+    margin-left: 5px;
+    margin-right: 5px;
+}

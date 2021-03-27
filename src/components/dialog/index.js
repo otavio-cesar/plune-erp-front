@@ -83,8 +83,8 @@ export function MeuDialog({
               >
                 <option aria-label="None" value="" />
                 {
-                  JSON.parse(localStorage.getItem('situations')).map(s => {
-                    return <option value={s.id}>{s.value}</option>
+                  JSON.parse(localStorage.getItem('situations')).map((s, i) => {
+                    return <option key={i} value={s.id}>{s.value}</option>
                   })
                 }
               </Select>

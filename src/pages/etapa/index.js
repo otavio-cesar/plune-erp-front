@@ -12,9 +12,11 @@ import { stageSituation } from "../../util/constants";
 
 import React from 'react';
 import { MeuDialog } from "../../components/dialog";
+import { patchRefugarOrdem } from "../../services/ordem";
 
 export default function EtapaPage(props) {
     const screenWidth = viewPort()
+    const [enableRefugo, setEnableRefugo] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -34,22 +36,7 @@ export default function EtapaPage(props) {
         { field: 'id', hide: true },
         { field: 'ordem', headerName: 'Ordem', width: screenWidth * (0.175) },
         { field: 'processo', headerName: 'Processo', width: screenWidth * (0.5) },
-        { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.25) },
-        // {
-        //     field: 'age',
-        //     headerName: 'Age',
-        //     type: 'number',
-        //     width: 90,
-        // },
-        // {
-        //     field: 'fullName',
-        //     headerName: 'Full name',
-        //     description: 'This column has a value getter and is not sortable.',
-        //     sortable: false,
-        //     width: 160,
-        //     valueGetter: (params) =>
-        //         `${params.getValue('firstName') || ''} ${params.getValue('lastName') || ''}`,
-        // },
+        { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.25) }
     ];
 
     useEffect(() => {
@@ -97,6 +84,7 @@ export default function EtapaPage(props) {
                                 }
                             })
                             setRows([...rows])
+                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa iniciada', 'success')
                         })
@@ -130,6 +118,7 @@ export default function EtapaPage(props) {
                                 }
                             })
                             setRows([...rows])
+                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa pausada', 'success')
                         })
@@ -163,6 +152,7 @@ export default function EtapaPage(props) {
                                 }
                             })
                             setRows([...rows])
+                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa finalizada', 'success')
                         })
@@ -197,8 +187,43 @@ export default function EtapaPage(props) {
                                 }
                             })
                             setRows([...rows])
+                            enableActions()
                             setLoading(false)
                             showMeuAlert('Ordem inspecionada', 'success')
+                        })
+                        .catch(e => {
+                            setLoading(false)
+                            showMeuAlert(e.message, 'error')
+                        })
+                }}>
+            </MeuDialog>
+        )
+    }
+
+    async function handleRefugoOrder() {
+        setShowDialog(
+            <MeuDialog
+                open={true}
+                setOpen={setShowDialog}
+                title={'Apontar ordem'}
+                message={`Deseja gerar apontar o refugo para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
+                labelQntProduction={`Quantidade de produtos refugados`}
+                askQntProduction
+                action={async (quantidade) => {
+                    setLoading(true)
+                    console.log(quantidade)
+                    await patchRefugarOrdem(idOrder, selectedRow.metadata.ProdutoId.value, quantidade)
+                        .then((data) => {
+                            console.log(data)
+                            // rows.forEach((el, i) => {
+                            //     if (el.id == selectedRow.metadata.Id.value) {
+                            //         rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
+                            //         return
+                            //     }
+                            // })
+                            // setRows([...rows])
+                            setLoading(false)
+                            showMeuAlert('Refugo realizado', 'success')
                         })
                         .catch(e => {
                             setLoading(false)
@@ -218,27 +243,39 @@ export default function EtapaPage(props) {
         enableActions()
     }, [selectedRow])
 
+    async function hasLineProductionPermission() {
+        const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
+        const hasPermission = LinhaProcessoProdutivoIds.includes[selectedRow.metadata.LinhaProcessoProdutivoId]
+        return hasPermission
+    }
+
     async function enableActions() {
-        if (selectedRow && statusOrder.value != stageSituation.finished.id) {
+        debugger
+        if ((selectedRow && statusOrder.value != stageSituation.finished.id) && hasLineProductionPermission()) {
             const situacao = selectedRow.metadata.Status.value
             setEnableStart(
-                situacao == (stageSituation.paused.id || situacao == stageSituation.freeToStart.id || selectedRow.id == stageSituation.inspect.id) && situacao == stageSituation.started.id
+                (situacao == stageSituation.paused.id || situacao == stageSituation.freeToStart.id || selectedRow.id == stageSituation.inspect.id) && statusOrder.value == stageSituation.started.id
             )
             setEnablePause(
-                situacao == stageSituation.started.id && !selectedRow.id == stageSituation.inspect.id
+                situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
             )
             setEnableFinish(
-                (situacao != stageSituation.paused.id || situacao == stageSituation.finished.id) && situacao != stageSituation.freeToStart.id && selectedRow.id != stageSituation.inspect.id
+                situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
             )
             setEnableInspect(
                 selectedRow.id == stageSituation.inspect.id && situacao == stageSituation.started.id
             )
+
         } else {
             setEnableStart(false)
             setEnableFinish(false)
             setEnablePause(false)
             setEnableInspect(false)
         }
+
+        setEnableRefugo(
+            statusOrder.value == stageSituation.finished.id
+        )
     }
 
     function showMeuAlert(message, severity) {
@@ -260,6 +297,12 @@ export default function EtapaPage(props) {
 
             <div className="container" >
                 <div className="lineAction">
+                    <div className="labelOP">
+                        OP:
+                        <div>
+                            {idOrder}
+                        </div>
+                    </div>
                     <Button variant="contained" color="primary" onClick={() => handleStartStage()} disabled={!enableStart}>
                         Iniciar Etapa
                     </Button>
@@ -271,6 +314,9 @@ export default function EtapaPage(props) {
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => handleInspecionarStage()} disabled={!enableInspect}>
                         Inspecionar
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={() => handleRefugoOrder()} disabled={!enableRefugo}>
+                        Apontar Refugo
                     </Button>
                 </div>
                 <div className="containerTable">
