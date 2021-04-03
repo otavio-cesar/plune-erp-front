@@ -33,8 +33,9 @@
 }
 
 button {
-    width: 14vh !important;
-    font-size: 1.8vh !important;
+    width: 10vh !important;
+    font-size: 1.4vh !important;
+    background-color: "#17a99f" !important;
 }
 
 .labelOP{

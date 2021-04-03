@@ -1,10 +1,10 @@
 import { Button, Container, TextField } from "@material-ui/core";
 import './styles.css';
-import { FaIndustry } from 'react-icons/fa';
+import { FiArrowLeft } from 'react-icons/fi';
 import { useEffect, useState } from "react";
 import { getStagesByIdOrder, patchStageSituation } from "../../services/stage";
 import { MeuAlerta } from "../../components/meuAlerta";
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { DataGrid } from '@material-ui/data-grid';
 import { viewPort } from "../../util/responsive";
 import Loading from "../../components/loading";
@@ -298,6 +298,13 @@ export default function EtapaPage(props) {
             <div className="container" >
                 <div className="lineAction">
                     <div className="labelOP">
+                        <div>
+                            <Link to="/" className="back-link" >
+                                <FiArrowLeft size={16} color="#3f51b5" />
+                            </Link>
+                        </div>
+                    </div>
+                    <div className="labelOP">
                         OP:
                         <div>
                             {idOrder}
@@ -318,6 +325,7 @@ export default function EtapaPage(props) {
                     <Button variant="contained" color="primary" onClick={() => handleRefugoOrder()} disabled={!enableRefugo}>
                         Apontar Refugo
                     </Button>
+
                 </div>
                 <div className="containerTable">
                     <DataGrid rows={rows} columns={columns} pageSize={10} onCellClick={(el) => handleSelectRow(el)} />

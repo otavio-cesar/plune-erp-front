@@ -22,6 +22,16 @@ export async function getOrdensByLineProduction(LinhaProcessoProdutivoIds) {
     return res.json()
 }
 
+export async function getOrdemById(id) {
+    const res = await fetch(`${urlAPI}ordem/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    return res.json()
+}
+
 export async function patchRefugarOrdem(OrdemId, ProdutoId, QuantidadeRefugada) {
     const res = await fetch(`${urlAPI}ordem/patchRefugar`, {
         method: "PATCH",
