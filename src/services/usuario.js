@@ -10,3 +10,13 @@ export async function login(username, password) {
     })
     return res
 }
+
+export async function getPCPUsers() {
+    const res = await fetch(`${urlAPI}usuario`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    return res.json()
+}

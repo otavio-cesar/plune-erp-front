@@ -27,6 +27,16 @@ function Routes() {
                             path="/login"
                             component={lazy(() => import("../pages/login/index"))}
                         />
+                        <DefaultRoute
+                            exact
+                            path="/admin"
+                            component={lazy(() => import("../pages/admin/home/index"))}
+                        />
+                        <DefaultRoute
+                            exact
+                            path="/admin/pcp-users"
+                            component={lazy(() => import("../pages/admin/pcp-users"))}
+                        />
                     </Switch>
                 </Suspense>
             </Router>

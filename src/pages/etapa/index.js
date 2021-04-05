@@ -250,7 +250,6 @@ export default function EtapaPage(props) {
     }
 
     async function enableActions() {
-        debugger
         if ((selectedRow && statusOrder.value != stageSituation.finished.id) && hasLineProductionPermission()) {
             const situacao = selectedRow.metadata.Status.value
             setEnableStart(
@@ -296,7 +295,7 @@ export default function EtapaPage(props) {
             {showDialog}
 
             <div className="container" >
-                <div className="lineAction">
+                <div className="lineActionEtapa">
                     <div className="labelOP">
                         <div>
                             <Link to="/" className="back-link" >
@@ -328,7 +327,7 @@ export default function EtapaPage(props) {
 
                 </div>
                 <div className="containerTable">
-                    <DataGrid rows={rows} columns={columns} pageSize={10} onCellClick={(el) => handleSelectRow(el)} />
+                    <DataGrid rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination onCellClick={(el) => handleSelectRow(el)} />
                 </div>
             </div>
         </>

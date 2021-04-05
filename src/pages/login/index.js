@@ -1,6 +1,5 @@
 import { Button, Container, TextField } from "@material-ui/core";
 import './styles.css';
-import { FaIndustry } from 'react-icons/fa';
 import { useState } from "react";
 import { login } from "../../services/usuario";
 import { MeuAlerta } from "../../components/meuAlerta";
@@ -8,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import Loading from '../../components/loading/index';
 import { getPossibleStageSituation } from "../../services/stage";
 import logo from '../../assets/logo1.jpg';
+import EnumPermissao from "../../util/EnumPermissions";
 
 export default function LoginPage(props) {
     const [username, setUsername] = useState('');
@@ -19,7 +19,7 @@ export default function LoginPage(props) {
 
     async function handleLogin(e) {
         e.preventDefault();
-        
+
         setLoading(true)
         let res = await login(username, password)
         setLoading(false)
@@ -42,7 +42,10 @@ export default function LoginPage(props) {
                 localStorage.setItem("situations", JSON.stringify(situations))
             }
 
-            history.push('/');
+            if (user.permissao == EnumPermissao.Admin)
+                history.push('/admin');
+            else
+                history.push('/');
         } else {
             setShowAlert(true)
             const error = (await res.json()).error
@@ -57,8 +60,6 @@ export default function LoginPage(props) {
 
             <Container className="containerLogin" maxWidth="sm">
                 <div className="logo">
-                    {/* <FaIndustry className="logo-img" size={50} color="#3f51b5" />
-                    <span className="logo-title">Controle de Ordens de Produção</span> */}
                     <img src={logo} />
                 </div>
                 <form autoComplete="off" onSubmit={handleLogin} >

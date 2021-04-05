@@ -1,16 +1,17 @@
-import { Button, Modal } from "@material-ui/core";
+import { Button, Modal, Typography } from "@material-ui/core";
 import './styles.css';
 import { useEffect, useState } from "react";
-import { getOrdemById, getOrdens, getOrdensByLineProduction } from "../../services/ordem";
-import { MeuAlerta } from "../../components/meuAlerta";
+import { getOrdemById } from "../../../services/ordem";
+import { getPCPUsers } from "../../../services/usuario";
+import { MeuAlerta } from "../../../components/meuAlerta";
 import { useHistory } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 import { DataGrid } from '@material-ui/data-grid';
-import { viewPort } from "../../util/responsive";
-import Loading from "../../components/loading";
-import EnumPermissions from "../../util/EnumPermissions";
-import { stageSituation } from "../../util/constants";
-import QrReader from 'react-qr-scanner';
+import { viewPort } from "../../../util/responsive";
+import Loading from "../../../components/loading";
+import { stageSituation } from "../../../util/constants";
 import { makeStyles } from '@material-ui/core/styles';
+import logo from '../../../assets/logo1.jpg';
 
 const previewStyle = {
     width: 320,
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function HomePage(props) {
+export default function PCPUserPage(props) {
     const screenWidth = viewPort()
     const [showAlert, setShowAlert] = useState(false);
     const [rows, setRows] = useState([]);
@@ -45,34 +46,28 @@ export default function HomePage(props) {
 
     const columns = [
         { field: 'id', headerName: 'OP', width: screenWidth * (0.15) },
-        { field: 'servico', headerName: 'Produto', width: screenWidth * (0.6) },
-        { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.2) },
+        { field: 'nome', headerName: 'Nome', width: screenWidth * (0.4) },
+        { field: 'email', headerName: 'Email', width: screenWidth * (0.4) },
     ];
 
     useEffect(() => {
-        showOrdens()
+        showUsers()
     }, [])
 
-    async function showOrdens() {
+    async function showUsers() {
         let data
         const usuario = JSON.parse(localStorage.getItem('user'))
-        if (usuario.permissao == EnumPermissions.Basic) {
-            const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
-            setLoading(true)
-            data = await getOrdensByLineProduction(LinhaProcessoProdutivoIds).catch(e => { showMeuAlert(e.message == 'Failed to fetch' ? 'Falha ao buscar dados' : e.message, 'error') });
-        } else {
-            setLoading(true)
-            data = await getOrdens();
-        }
+        setLoading(true)
+        data = await getPCPUsers();
         setLoading(false)
 
-        if (data.data) {
-            console.log(data.data.row)
-            const _rows = data.data.row.map(o => {
+        if (data) {
+            console.log(data)
+            const _rows = data.map(o => {
                 return {
                     id: o.Id.value,
-                    servico: o.ProdutoId.resolved,
-                    situacao: o.Status.resolved,
+                    nome: o.Nome.value,
+                    email: o.email,
                     metadata: { ...o }
                 }
             })
@@ -94,27 +89,6 @@ export default function HomePage(props) {
             showMeuAlert('Não existe ações para essa etapa', 'error')
     }
 
-    async function lerQRCODE(data) {
-        console.log(data)
-        if (data && !searchingOP) {
-            let id = data.text.split('.')[3]
-            console.log(id)
-            let ordem
-            searchingOP = true
-            ordem = await getOrdemById(id).catch(e => console.log(e));
-            searchingOP = false
-            console.log(ordem)
-            if (ordem) {
-                let selectedOrdem = rows.find(o => o.id == id)
-                history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status })
-            } else {
-                showMeuAlert(`A OP ${id} não foi encontrada no servidor`, 'error')
-            }
-            setOpen(false)
-        }
-
-    }
-
     function showMeuAlert(message, severity) {
         setShowAlert(
             <MeuAlerta
@@ -132,31 +106,19 @@ export default function HomePage(props) {
             {loading && <Loading ></Loading>}
             {showDialog}
 
-            <Modal
-                open={open}
-                onClose={() => setOpen(false)}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-            >
-                <div style={modalStyle} className={classes.paper}>
-                    <QrReader
-                        delay={100}
-                        style={previewStyle}
-                        onError={(e) => console.log(e)}
-                        onScan={(data) => lerQRCODE(data)}
-                    />
-                </div>
-            </Modal>
-
             <div className="container" >
-                <div className="lineAction">
-                    <div className="labelOP">
-                        <span className="logo-title">Ordens de Produção</span>
-                    </div>
-                    <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-                        Ler QRCODE
-                    </Button>
+                <div className="header">
+                    <img className="logo-img" src={logo} />
+                    <Link to="/admin" className="link" color="inherit">
+                        <Typography color="textPrimary">Usuários PCP</Typography>
+                    </Link>
+                    <Link to="/admin" className="link" >
+                        <Typography color="textPrimary">Token Plune</Typography>
+                    </Link>
                 </div>
+
+                <span className="ah1">Usuários PCP</span>
+
                 <div className="containerTable">
                     <DataGrid
                         rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination

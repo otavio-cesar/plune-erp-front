@@ -1,16 +1,19 @@
-import { Button, Modal } from "@material-ui/core";
+import { Button, Modal, Typography } from "@material-ui/core";
 import './styles.css';
 import { useEffect, useState } from "react";
-import { getOrdemById, getOrdens, getOrdensByLineProduction } from "../../services/ordem";
-import { MeuAlerta } from "../../components/meuAlerta";
+import { getOrdemById, getOrdens, getOrdensByLineProduction } from "../../../services/ordem";
+import { MeuAlerta } from "../../../components/meuAlerta";
 import { useHistory } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 import { DataGrid } from '@material-ui/data-grid';
-import { viewPort } from "../../util/responsive";
-import Loading from "../../components/loading";
-import EnumPermissions from "../../util/EnumPermissions";
-import { stageSituation } from "../../util/constants";
+import { viewPort } from "../../../util/responsive";
+import Loading from "../../../components/loading";
+import EnumPermissions from "../../../util/EnumPermissions";
+import { stageSituation } from "../../../util/constants";
 import QrReader from 'react-qr-scanner';
 import { makeStyles } from '@material-ui/core/styles';
+import logo from '../../../assets/logo1.jpg';
+import { FiArrowLeft } from "react-icons/fi";
 
 const previewStyle = {
     width: 320,
@@ -54,6 +57,7 @@ export default function HomePage(props) {
     }, [])
 
     async function showOrdens() {
+        return
         let data
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Basic) {
@@ -132,31 +136,19 @@ export default function HomePage(props) {
             {loading && <Loading ></Loading>}
             {showDialog}
 
-            <Modal
-                open={open}
-                onClose={() => setOpen(false)}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-            >
-                <div style={modalStyle} className={classes.paper}>
-                    <QrReader
-                        delay={100}
-                        style={previewStyle}
-                        onError={(e) => console.log(e)}
-                        onScan={(data) => lerQRCODE(data)}
-                    />
-                </div>
-            </Modal>
-
             <div className="container" >
-                <div className="lineAction">
-                    <div className="labelOP">
-                        <span className="logo-title">Ordens de Produção</span>
-                    </div>
-                    <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-                        Ler QRCODE
-                    </Button>
+                <div className="header">
+                    <img className="logo-img" src={logo} />
+                    <Link href="/admin/pcp-users" className="link" color="inherit">
+                        <Typography color="textPrimary">Usuários PCP</Typography>
+                    </Link>
+                    <Link href="/admin" className="link" >
+                        <Typography color="textPrimary">Token Plune</Typography>
+                    </Link>
                 </div>
+
+                <span className="ah1">Ordens de Produção</span>
+                
                 <div className="containerTable">
                     <DataGrid
                         rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination
