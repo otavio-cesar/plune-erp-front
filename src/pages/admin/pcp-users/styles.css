@@ -55,8 +55,8 @@
 }
 
 .field{
-    min-width: 500px;
-    padding-bottom: 5px;
+    min-width: 500px !important;
+    padding-bottom: 5px !important;
 }
 
 .button{
