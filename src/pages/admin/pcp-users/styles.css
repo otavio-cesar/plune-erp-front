@@ -46,7 +46,6 @@
     cursor: pointer;
 }
 
-
 .containerCadastro{
     flex-direction: row;
     align-self: flex-start;
@@ -60,6 +59,6 @@
 }
 
 .button{
-    margin-right: 10px;
-    margin-top: 10px;
+    margin-right: 10px !important;
+    margin-top: 10px !important;
 }
