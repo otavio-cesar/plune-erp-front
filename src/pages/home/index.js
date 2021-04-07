@@ -52,6 +52,14 @@ export default function HomePage(props) {
     ];
 
     useEffect(() => {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+        .then(function(stream) {
+          /* use the stream */
+        })
+        .catch(function(err) {
+          /* handle the error */
+        });
+
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Basic) {
             setIsLoggedUserAdmin(true)
@@ -138,21 +146,22 @@ export default function HomePage(props) {
             {loading && <Loading ></Loading>}
             {showDialog}
 
-            <Modal
-                open={open}
+            {/* <Modal
+                open={true}
                 onClose={() => setOpen(false)}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
             >
-                <div style={modalStyle} className={classes.paper}>
+                <div style={modalStyle} className={classes.paper}> */}
                     <QrReader
                         delay={100}
                         style={previewStyle}
-                        onError={(e) => console.log(e)}
+                        onError={(e) => alert(e)}
+                        facingMode='user'
                         onScan={(data) => lerQRCODE(data)}
                     />
-                </div>
-            </Modal>
+                {/* </div>
+            </Modal> */}
 
             <div className="container" >
                 <div className="lineAction">
