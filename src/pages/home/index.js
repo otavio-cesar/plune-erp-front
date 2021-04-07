@@ -3,7 +3,7 @@ import './styles.css';
 import { useEffect, useState } from "react";
 import { getOrdemById, getOrdens, getOrdensByLineProduction } from "../../services/ordem";
 import { MeuAlerta } from "../../components/meuAlerta";
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { DataGrid } from '@material-ui/data-grid';
 import { viewPort } from "../../util/responsive";
 import Loading from "../../components/loading";
@@ -11,6 +11,7 @@ import EnumPermissions from "../../util/EnumPermissions";
 import { stageSituation } from "../../util/constants";
 import QrReader from 'react-qr-scanner';
 import { makeStyles } from '@material-ui/core/styles';
+import { FiSettings } from "react-icons/fi";
 
 const previewStyle = {
     width: 320,
@@ -34,6 +35,7 @@ export default function HomePage(props) {
     const [showAlert, setShowAlert] = useState(false);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isLoggedUserAdmin, setIsLoggedUserAdmin] = useState(false);
     const [showDialog, setShowDialog] = useState(<></>);
     const history = useHistory();
 
@@ -50,6 +52,10 @@ export default function HomePage(props) {
     ];
 
     useEffect(() => {
+        const usuario = JSON.parse(localStorage.getItem('user'))
+        if (usuario.permissao == EnumPermissions.Basic) {
+            setIsLoggedUserAdmin(true)
+        }
         showOrdens()
     }, [])
 
@@ -153,9 +159,18 @@ export default function HomePage(props) {
                     <div className="labelOP">
                         <span className="logo-title">Ordens de Produção</span>
                     </div>
-                    <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-                        Ler QRCODE
-                    </Button>
+                    <div className="doRow">
+                        <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+                            Ler QRCODE
+                        </Button>
+                        {isLoggedUserAdmin &&
+                            <div className="labelOP">
+                                <Link to="/admin" className="engine-link" >
+                                    <FiSettings size={24} color="#3f51b5" />
+                                </Link>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div className="containerTable">
                     <DataGrid

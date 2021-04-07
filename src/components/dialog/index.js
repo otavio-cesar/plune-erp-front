@@ -8,19 +8,11 @@ import { InputLabel, makeStyles, TextField } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import React, { useState } from 'react';
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    marginTop: theme.spacing(2),
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-}));
-
 export function MeuDialog({
   open, title, message, action, setOpen,
   askReason, labelReason = "Motivo",
-  askQntProduction, labelQntProduction = "Quantidade produzida na etapa"
+  askQntProduction, labelQntProduction = "Quantidade produzida na etapa",
+  confirm = "Sim", notConfirm = "Não"
 }) {
 
   const [password, setPassword] = useState('');
@@ -112,10 +104,10 @@ export function MeuDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleNo} color="primary">
-            Não
+            {notConfirm}
           </Button>
           <Button color="primary" autoFocus type="submit">
-            Sim
+            {confirm}
           </Button>
         </DialogActions>
       </form>

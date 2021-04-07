@@ -14,6 +14,7 @@ import QrReader from 'react-qr-scanner';
 import { makeStyles } from '@material-ui/core/styles';
 import logo from '../../../assets/logo1.jpg';
 import { FiArrowLeft } from "react-icons/fi";
+import Header from "../../../components/header";
 
 const previewStyle = {
     width: 320,
@@ -137,20 +138,13 @@ export default function HomePage(props) {
             {showDialog}
 
             <div className="container" >
-                <div className="header">
-                    <img className="logo-img" src={logo} />
-                    <Link href="/admin/pcp-users" className="link" color="inherit">
-                        <Typography color="textPrimary">Usuários PCP</Typography>
-                    </Link>
-                    <Link href="/admin" className="link" >
-                        <Typography color="textPrimary">Token Plune</Typography>
-                    </Link>
-                </div>
+                <Header></Header>
 
                 <span className="ah1">Ordens de Produção</span>
-                
+
                 <div className="containerTable">
-                    <DataGrid
+                    Em construção, teremos aqui o relatório.
+                    {/* <DataGrid
                         rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination
                         localeText={{
                             columnMenuLabel: 'Menu',
@@ -161,7 +155,7 @@ export default function HomePage(props) {
                             columnMenuSortAsc: 'Ordem ascendente',
                             columnMenuSortDesc: 'Ordem descendente',
                         }}
-                        onRowClick={(el) => handleSelectRow(el)} />
+                        onRowClick={(el) => handleSelectRow(el)} /> */}
                 </div>
             </div>
         </>

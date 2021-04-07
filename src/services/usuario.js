@@ -20,3 +20,17 @@ export async function getPCPUsers() {
     })
     return res.json()
 }
+
+export async function convidar({ UserPCPId, email, nome, permissao, enviarEmail }) {
+    const res = await fetch(`${urlAPI}usuario/convidar`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ UserPCPId, email, nome, permissao, enviarEmail })
+    })
+    if (res.status == 201)
+        return res.json()
+    else
+        throw new Error((await res.json()).message)
+}
