@@ -11,7 +11,8 @@ import EnumPermissions from "../../util/EnumPermissions";
 import { stageSituation } from "../../util/constants";
 import QrReader from 'react-qr-scanner';
 import { makeStyles } from '@material-ui/core/styles';
-import { FiSettings } from "react-icons/fi";
+import { FiLogOut, FiSettings } from "react-icons/fi";
+import { MeuDialog } from "../../components/dialog";
 
 const previewStyle = {
     width: 320,
@@ -51,15 +52,16 @@ export default function HomePage(props) {
         { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.2) },
     ];
 
-    useEffect(() => {
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-        .then(function(stream) {
-          /* use the stream */
-        })
-        .catch(function(err) {
-          /* handle the error */
-        });
+    async function askCameraPermission() {
+        try {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+        } catch (e) {
+            console.log(e)
+            showMeuAlert('Câmera: ' + e, 'error')
+        }
+    }
 
+    useEffect(() => {
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Basic) {
             setIsLoggedUserAdmin(true)
@@ -109,6 +111,7 @@ export default function HomePage(props) {
     }
 
     async function lerQRCODE(data) {
+        askCameraPermission()
         console.log(data)
         if (data && !searchingOP) {
             let id = data.text.split('.')[3]
@@ -140,28 +143,45 @@ export default function HomePage(props) {
         )
     }
 
+    async function logout() {
+        setShowDialog(
+            <MeuDialog
+                open={true}
+                setOpen={setShowDialog}
+                title={'Sair do sistema'}
+                confirm="Sim"
+                notConfirm="Cancelar"
+                message={`Deseja sair do sistema?`}
+                action={async () => {
+                    localStorage.removeItem("user");
+                    history.push('/login')
+                }}>
+            </MeuDialog>
+        )
+    }
+
     return (
         <>
             {showAlert}
             {loading && <Loading ></Loading>}
             {showDialog}
 
-            {/* <Modal
-                open={true}
+            <Modal
+                open={open}
                 onClose={() => setOpen(false)}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
             >
-                <div style={modalStyle} className={classes.paper}> */}
+                <div style={modalStyle} className={classes.paper}>
                     <QrReader
                         delay={100}
                         style={previewStyle}
-                        onError={(e) => alert(e)}
+                        onError={(e) => { showMeuAlert('Câmera: ' + e, 'error') }}
                         facingMode='user'
                         onScan={(data) => lerQRCODE(data)}
                     />
-                {/* </div>
-            </Modal> */}
+                </div>
+            </Modal>
 
             <div className="container" >
                 <div className="lineAction">
@@ -169,16 +189,22 @@ export default function HomePage(props) {
                         <span className="logo-title">Ordens de Produção</span>
                     </div>
                     <div className="doRow">
-                        <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+                        <Button variant="contained" className="qrbutton" color="primary" onClick={() => setOpen(true)}>
                             Ler QRCODE
                         </Button>
                         {isLoggedUserAdmin &&
                             <div className="labelOP">
                                 <Link to="/admin" className="engine-link" >
-                                    <FiSettings size={24} color="#3f51b5" />
+                                    <FiSettings size={22} color="#3f51b5" />
                                 </Link>
                             </div>
                         }
+                        <div className="labelOP">
+                            <Link onClick={() => logout()} className="engine-link" >
+                                <FiLogOut size={22} color="#3f51b5" />
+                            </Link>
+                        </div>
+
                     </div>
                 </div>
                 <div className="containerTable">

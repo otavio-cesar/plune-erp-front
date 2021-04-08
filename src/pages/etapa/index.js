@@ -1,4 +1,4 @@
-import { Button, Container, TextField } from "@material-ui/core";
+import { Button} from "@material-ui/core";
 import './styles.css';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useEffect, useState } from "react";
@@ -9,24 +9,20 @@ import { DataGrid } from '@material-ui/data-grid';
 import { viewPort } from "../../util/responsive";
 import Loading from "../../components/loading";
 import { stageSituation } from "../../util/constants";
-
 import React from 'react';
 import { MeuDialog } from "../../components/dialog";
-import { patchRefugarOrdem } from "../../services/ordem";
 
 export default function EtapaPage(props) {
     const screenWidth = viewPort()
-    const [enableRefugo, setEnableRefugo] = useState(false);
+    const [enableApontamento, setEnableApontamento] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [enableStart, setEnableStart] = useState(false);
     const [enablePause, setEnablePause] = useState(false);
     const [enableFinish, setEnableFinish] = useState(false);
-    const [enableInspect, setEnableInspect] = useState(false);
     const [selectedRow, setSelectedRow] = useState();
     const [showDialog, setShowDialog] = useState(<></>);
-    const [reason, setReason] = useState('')
     const history = useHistory();
 
     const idOrder = props.location.state.idOrder
@@ -66,6 +62,10 @@ export default function EtapaPage(props) {
     }
 
     async function handleStartStage() {
+        if (selectedRow.id == stageSituation.inspect.id) {
+            handleInspecionarStage()
+            return
+        }
         setShowDialog(
             <MeuDialog
                 open={true}
@@ -80,11 +80,11 @@ export default function EtapaPage(props) {
                             rows.forEach((el, i) => {
                                 if (el.id == selectedRow.metadata.ProcessoId.value) {
                                     rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
+                                    setSelectedRow(rows[i])
                                     return
                                 }
                             })
                             setRows([...rows])
-                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa iniciada', 'success')
                         })
@@ -114,11 +114,11 @@ export default function EtapaPage(props) {
                             rows.forEach((el, i) => {
                                 if (el.id == selectedRow.metadata.ProcessoId.value) {
                                     rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
+                                    setSelectedRow(rows[i])
                                     return
                                 }
                             })
                             setRows([...rows])
-                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa pausada', 'success')
                         })
@@ -138,21 +138,20 @@ export default function EtapaPage(props) {
                 setOpen={setShowDialog}
                 title={'Finalizar etapa'}
                 message={`Deseja finalizar o processo: ${selectedRow.metadata.ProcessoId.resolved}?`}
-                askQntProduction
                 action={async (quantidade) => {
                     setLoading(true)
                     console.log(quantidade)
-                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, quantidade)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, null, null)
                         .then((data) => {
                             console.log(data)
                             rows.forEach((el, i) => {
                                 if (el.id == selectedRow.metadata.ProcessoId.value) {
                                     rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
+                                    setSelectedRow(rows[i])
                                     return
                                 }
                             })
                             setRows([...rows])
-                            enableActions()
                             setLoading(false)
                             showMeuAlert('Etapa finalizada', 'success')
                         })
@@ -177,17 +176,17 @@ export default function EtapaPage(props) {
                 action={async (quantidade) => {
                     setLoading(true)
                     console.log(quantidade)
-                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, quantidade, true)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, quantidade, null)
                         .then((data) => {
                             console.log(data)
                             rows.forEach((el, i) => {
                                 if (el.id == selectedRow.metadata.ProcessoId.value) {
                                     rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
+                                    setSelectedRow(rows[i])
                                     return
                                 }
                             })
                             setRows([...rows])
-                            enableActions()
                             setLoading(false)
                             showMeuAlert('Ordem inspecionada', 'success')
                         })
@@ -206,24 +205,42 @@ export default function EtapaPage(props) {
                 open={true}
                 setOpen={setShowDialog}
                 title={'Apontar ordem'}
-                message={`Deseja gerar apontar o refugo para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
+                message={`Deseja apontar o refugo para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
                 labelQntProduction={`Quantidade de produtos refugados`}
                 askQntProduction
                 action={async (quantidade) => {
                     setLoading(true)
                     console.log(quantidade)
-                    await patchRefugarOrdem(idOrder, selectedRow.metadata.ProdutoId.value, quantidade)
-                        .then((data) => {
-                            console.log(data)
-                            // rows.forEach((el, i) => {
-                            //     if (el.id == selectedRow.metadata.Id.value) {
-                            //         rows[i] = { ...el, situacao: data.Field.Status.resolved, metadata: { ...data.Field } }
-                            //         return
-                            //     }
-                            // })
-                            // setRows([...rows])
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, null, quantidade)
+                        .then(() => {
                             setLoading(false)
                             showMeuAlert('Refugo realizado', 'success')
+                        })
+                        .catch(e => {
+                            setLoading(false)
+                            showMeuAlert(e.message, 'error')
+                        })
+                }}>
+            </MeuDialog>
+        )
+    }
+
+    async function handleProducaoOrder() {
+        setShowDialog(
+            <MeuDialog
+                open={true}
+                setOpen={setShowDialog}
+                title={'Apontar ordem'}
+                message={`Deseja apontar o produção para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
+                labelQntProduction={`Quantidade de produtos produzidos`}
+                askQntProduction
+                action={async (quantidade) => {
+                    setLoading(true)
+                    console.log(quantidade)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, quantidade, null, null)
+                        .then(() => {
+                            setLoading(false)
+                            showMeuAlert('Produção realizada', 'success')
                         })
                         .catch(e => {
                             setLoading(false)
@@ -261,20 +278,15 @@ export default function EtapaPage(props) {
             setEnableFinish(
                 situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
             )
-            setEnableInspect(
-                selectedRow.id == stageSituation.inspect.id && situacao == stageSituation.started.id
+            setEnableApontamento(
+                (situacao == stageSituation.paused.id || situacao == stageSituation.finished.id) && selectedRow.id != stageSituation.inspect.id
             )
-
         } else {
             setEnableStart(false)
             setEnableFinish(false)
             setEnablePause(false)
-            setEnableInspect(false)
+            setEnableApontamento(false)
         }
-
-        setEnableRefugo(
-            statusOrder.value == stageSituation.finished.id
-        )
     }
 
     function showMeuAlert(message, severity) {
@@ -310,7 +322,7 @@ export default function EtapaPage(props) {
                         </div>
                     </div>
                     <Button variant="contained" color="primary" onClick={() => handleStartStage()} disabled={!enableStart}>
-                        Iniciar Etapa
+                        Iniciar
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => handlePauseStage()} disabled={!enablePause}>
                         Interromper
@@ -318,10 +330,10 @@ export default function EtapaPage(props) {
                     <Button variant="contained" color="primary" onClick={() => handleFinishStage()} disabled={!enableFinish}>
                         Finalizar
                     </Button>
-                    <Button variant="contained" color="primary" onClick={() => handleInspecionarStage()} disabled={!enableInspect}>
-                        Inspecionar
+                    <Button variant="contained" color="primary" onClick={() => handleProducaoOrder()} disabled={!enableApontamento}>
+                        Apontar Produção
                     </Button>
-                    <Button variant="contained" color="primary" onClick={() => handleRefugoOrder()} disabled={!enableRefugo}>
+                    <Button variant="contained" color="primary" onClick={() => handleRefugoOrder()} disabled={!enableApontamento}>
                         Apontar Refugo
                     </Button>
 

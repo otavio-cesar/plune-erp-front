@@ -44,7 +44,7 @@
     font-family: "Roboto";
     font-size: 21px;
     letter-spacing: 1.5px;
-    /* margin-left: 35px; */
+    margin-left: 10px;
 }
 
 .doRow{
@@ -52,6 +52,10 @@
 }
 
 .engine-link{
-    padding-left: 10px;
+    padding-left: 5px;
     padding-right: 10px;
+}
+
+.qrbutton{
+    margin-right: 10px;
 }
