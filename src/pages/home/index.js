@@ -45,6 +45,7 @@ export default function HomePage(props) {
     const [modalStyle] = useState(getModalStyle);
 
     let searchingOP = false;
+    let stream
 
     const columns = [
         { field: 'id', headerName: 'OP', width: screenWidth * (0.15) },
@@ -54,7 +55,12 @@ export default function HomePage(props) {
 
     async function askCameraPermission() {
         try {
-            await navigator.mediaDevices.getUserMedia({ video: true });
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+            }
         } catch (e) {
             console.log(e)
             showMeuAlert('Câmera: ' + e, 'error')
@@ -62,6 +68,7 @@ export default function HomePage(props) {
     }
 
     useEffect(() => {
+        askCameraPermission()
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Basic) {
             setIsLoggedUserAdmin(true)
@@ -111,7 +118,7 @@ export default function HomePage(props) {
     }
 
     async function lerQRCODE(data) {
-        askCameraPermission()
+
         console.log(data)
         if (data && !searchingOP) {
             let id = data.text.split('.')[3]
@@ -123,7 +130,11 @@ export default function HomePage(props) {
             console.log(ordem)
             if (ordem) {
                 let selectedOrdem = rows.find(o => o.id == id)
-                history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status })
+                if(selectedOrdem){
+                    history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status })
+                }else{
+                    showMeuAlert(`A OP ${id} não está acessível`, 'error')
+                }
             } else {
                 showMeuAlert(`A OP ${id} não foi encontrada no servidor`, 'error')
             }
@@ -160,6 +171,16 @@ export default function HomePage(props) {
         )
     }
 
+    async function stopQRReading() {
+        setOpen(false)
+        if (stream) {
+            debugger
+            stream.getTracks().forEach(track => {
+                track.stop();
+            });
+        }
+    }
+
     return (
         <>
             {showAlert}
@@ -168,7 +189,7 @@ export default function HomePage(props) {
 
             <Modal
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={() => { }}
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
             >
@@ -177,9 +198,12 @@ export default function HomePage(props) {
                         delay={100}
                         style={previewStyle}
                         onError={(e) => { showMeuAlert('Câmera: ' + e, 'error') }}
-                        facingMode='user'
+                        facingMode='environment'
                         onScan={(data) => lerQRCODE(data)}
                     />
+                    <Button variant="contained" className="qrbuttonModal" color="primary" onClick={() => { stopQRReading() }}>
+                        Cancelar
+                    </Button>
                 </div>
             </Modal>
 
