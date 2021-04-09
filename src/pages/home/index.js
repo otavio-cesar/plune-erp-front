@@ -9,10 +9,11 @@ import { viewPort } from "../../util/responsive";
 import Loading from "../../components/loading";
 import EnumPermissions from "../../util/EnumPermissions";
 import { stageSituation } from "../../util/constants";
-import QrReader from 'react-qr-scanner';
+import QrReader from 'react-web-qr-reader';
 import { makeStyles } from '@material-ui/core/styles';
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { MeuDialog } from "../../components/dialog";
+import React from "react";
 
 const previewStyle = {
     width: 320,
@@ -45,7 +46,6 @@ export default function HomePage(props) {
     const [modalStyle] = useState(getModalStyle);
 
     let searchingOP = false;
-    let stream
 
     const columns = [
         { field: 'id', headerName: 'OP', width: screenWidth * (0.15) },
@@ -53,22 +53,22 @@ export default function HomePage(props) {
         { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.2) },
     ];
 
-    async function askCameraPermission() {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-            }
-        } catch (e) {
-            console.log(e)
-            showMeuAlert('Câmera: ' + e, 'error')
-        }
-    }
+    // async function askCameraPermission() {
+    //     try {
+    //         stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    //         if (stream) {
+    //             stream.getTracks().forEach(track => {
+    //                 track.stop();
+    //             });
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //         showMeuAlert('Câmera: ' + e, 'error')
+    //     }
+    // }
 
     useEffect(() => {
-        askCameraPermission()
+        // askCameraPermission()
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Basic) {
             setIsLoggedUserAdmin(true)
@@ -118,10 +118,9 @@ export default function HomePage(props) {
     }
 
     async function lerQRCODE(data) {
-
         console.log(data)
         if (data && !searchingOP) {
-            let id = data.text.split('.')[3]
+            let id = data.data.split('.')[3]
             console.log(id)
             let ordem
             searchingOP = true
@@ -130,9 +129,9 @@ export default function HomePage(props) {
             console.log(ordem)
             if (ordem) {
                 let selectedOrdem = rows.find(o => o.id == id)
-                if(selectedOrdem){
+                if (selectedOrdem) {
                     history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status })
-                }else{
+                } else {
                     showMeuAlert(`A OP ${id} não está acessível`, 'error')
                 }
             } else {
@@ -171,16 +170,6 @@ export default function HomePage(props) {
         )
     }
 
-    async function stopQRReading() {
-        setOpen(false)
-        if (stream) {
-            debugger
-            stream.getTracks().forEach(track => {
-                track.stop();
-            });
-        }
-    }
-
     return (
         <>
             {showAlert}
@@ -193,15 +182,15 @@ export default function HomePage(props) {
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
             >
-                <div style={modalStyle} className={classes.paper}>
+                <div style={modalStyle} className={classes.paper} >
                     <QrReader
                         delay={100}
                         style={previewStyle}
                         onError={(e) => { showMeuAlert('Câmera: ' + e, 'error') }}
-                        facingMode='environment'
+                        facingmode='environment'
                         onScan={(data) => lerQRCODE(data)}
                     />
-                    <Button variant="contained" className="qrbuttonModal" color="primary" onClick={() => { stopQRReading() }}>
+                    <Button variant="contained" className="qrbuttonModal" color="primary" onClick={() => { setOpen(false) }}>
                         Cancelar
                     </Button>
                 </div>

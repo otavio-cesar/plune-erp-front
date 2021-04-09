@@ -10,7 +10,6 @@ import { viewPort } from "../../../util/responsive";
 import Loading from "../../../components/loading";
 import EnumPermissions from "../../../util/EnumPermissions";
 import { stageSituation } from "../../../util/constants";
-import QrReader from 'react-qr-scanner';
 import { makeStyles } from '@material-ui/core/styles';
 import logo from '../../../assets/logo1.jpg';
 import { FiArrowLeft } from "react-icons/fi";
