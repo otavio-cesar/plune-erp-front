@@ -18,7 +18,10 @@ export async function getPCPUsers() {
             "Content-Type": "application/json",
         },
     })
-    return res.json()
+    if (res.status == 200)
+        return res.json()
+    else
+        throw new Error((await res.json()).message)
 }
 
 export async function convidar({ UserPCPId, email, nome, permissao, enviarEmail }) {
@@ -30,6 +33,33 @@ export async function convidar({ UserPCPId, email, nome, permissao, enviarEmail 
         body: JSON.stringify({ UserPCPId, email, nome, permissao, enviarEmail })
     })
     if (res.status == 201)
+        return res.json()
+    else
+        throw new Error((await res.json()).message)
+}
+
+export async function alteraToken({ token }) {
+    const res = await fetch(`${urlAPI}usuario/alteraToken`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token })
+    })
+    if (res.status == 201)
+        return res.json()
+    else
+        throw new Error((await res.json()).message)
+}
+
+export async function getToken() {
+    const res = await fetch(`${urlAPI}usuario/getToken`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    if (res.status == 200)
         return res.json()
     else
         throw new Error((await res.json()).message)

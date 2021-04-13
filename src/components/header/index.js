@@ -17,7 +17,7 @@ function Header() {
             <Link href="/" className="link" color="inherit">
                 <Typography color="textPrimary">Operador</Typography>
             </Link>
-            <Link href="/admin" className="link" >
+            <Link href="/admin/token-plune" className="link" >
                 <Typography color="textPrimary">Token Plune</Typography>
             </Link>
         </div>

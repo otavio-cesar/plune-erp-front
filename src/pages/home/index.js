@@ -53,57 +53,51 @@ export default function HomePage(props) {
         { field: 'situacao', headerName: 'Situação', width: screenWidth * (0.2) },
     ];
 
-    // async function askCameraPermission() {
-    //     try {
-    //         stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //         if (stream) {
-    //             stream.getTracks().forEach(track => {
-    //                 track.stop();
-    //             });
-    //         }
-    //     } catch (e) {
-    //         console.log(e)
-    //         showMeuAlert('Câmera: ' + e, 'error')
-    //     }
-    // }
-
     useEffect(() => {
-        // askCameraPermission()
+        // const query = new URLSearchParams(props.location.search); pulo do gato
+        // const token = query.get('token')
+        // console.log(token)
         const usuario = JSON.parse(localStorage.getItem('user'))
-        if (usuario.permissao == EnumPermissions.Basic) {
+        if (usuario.permissao == EnumPermissions.Admin) {
             setIsLoggedUserAdmin(true)
         }
         showOrdens()
     }, [])
 
     async function showOrdens() {
-        let data
-        const usuario = JSON.parse(localStorage.getItem('user'))
-        if (usuario.permissao == EnumPermissions.Basic) {
-            const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
-            setLoading(true)
-            data = await getOrdensByLineProduction(LinhaProcessoProdutivoIds).catch(e => { showMeuAlert(e.message == 'Failed to fetch' ? 'Falha ao buscar dados' : e.message, 'error') });
-        } else {
-            setLoading(true)
-            data = await getOrdens();
-        }
-        setLoading(false)
+        try {
 
-        if (data.data) {
-            console.log(data.data.row)
-            const _rows = data.data.row.map(o => {
-                return {
-                    id: o.Id.value,
-                    servico: o.ProdutoId.resolved,
-                    situacao: o.Status.resolved,
-                    metadata: { ...o }
-                }
-            })
-            setRows(_rows)
-        } else {
-            if (data.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
-                showMeuAlert('Token de acesso ao Plune é inválido, contate o administrador', 'error')
+            let data
+            const usuario = JSON.parse(localStorage.getItem('user'))
+            if (usuario.permissao == EnumPermissions.Basic) {
+                const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
+                setLoading(true)
+                data = await getOrdensByLineProduction(LinhaProcessoProdutivoIds).catch(e => { showMeuAlert(e.message == 'Failed to fetch' ? 'Falha ao buscar dados' : e.message, 'error') });
+            } else {
+                setLoading(true)
+                data = await getOrdens();
             }
+            setLoading(false)
+
+            if (data.data) {
+                console.log(data.data.row)
+                const _rows = data.data.row.map(o => {
+                    return {
+                        id: o.Id.value,
+                        servico: o.ProdutoId.resolved,
+                        situacao: o.Status.resolved,
+                        metadata: { ...o }
+                    }
+                })
+                setRows(_rows)
+            } else {
+                if (data.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
+                    showMeuAlert('Token de acesso ao Plune é inválido, contate o administrador', 'error')
+                }
+            }
+        } catch (e) {
+            setLoading(false)
+            showMeuAlert(e.message, 'error')
         }
     }
 

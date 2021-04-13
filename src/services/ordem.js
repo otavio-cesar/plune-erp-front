@@ -8,7 +8,10 @@ export async function getOrdens() {
             "Content-Type": "application/json",
         },
     })
-    return res.json()
+    if (res.status == 200)
+        return res.json()
+    else
+        throw new Error((await res.json()).message)
 }
 
 export async function getOrdensByLineProduction(LinhaProcessoProdutivoIds) {

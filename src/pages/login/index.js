@@ -30,17 +30,18 @@ export default function LoginPage(props) {
             localStorage.setItem('user', JSON.stringify(user))
             localStorage.setItem('token', token);
 
-            res = await getPossibleStageSituation()
-            console.log(res)
-            if (res.data.row) {
-                const situations = res.data.row.map(d => {
-                    return {
-                        id: d.Id.value,
-                        value: d.Description.value
-                    }
-                })
-                localStorage.setItem("situations", JSON.stringify(situations))
-            }
+            await getPossibleStageSituation().then(res => {
+                console.log(res)
+                if (res.data.row) {
+                    const situations = res.data.row.map(d => {
+                        return {
+                            id: d.Id.value,
+                            value: d.Description.value
+                        }
+                    })
+                    localStorage.setItem("situations", JSON.stringify(situations))
+                }
+            }).catch(e=>console.log(e))
 
             if (user.permissao == EnumPermissao.Admin)
                 history.push('/admin');

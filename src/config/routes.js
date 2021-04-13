@@ -18,7 +18,6 @@ function Routes() {
                         />
                         <DefaultRoute
                             needUserLogged
-                            exact
                             path="/etapa"
                             component={lazy(() => import("../pages/etapa/index"))}
                         />
@@ -36,6 +35,11 @@ function Routes() {
                             exact
                             path="/admin/pcp-users"
                             component={lazy(() => import("../pages/admin/pcp-users"))}
+                        />
+                        <DefaultRoute
+                            exact
+                            path="/admin/token-plune"
+                            component={lazy(() => import("../pages/admin/token-plune"))}
                         />
                     </Switch>
                 </Suspense>

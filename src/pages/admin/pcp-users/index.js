@@ -20,15 +20,14 @@ export default function PCPUserPage(props) {
     const [loading, setLoading] = useState(false);
     const [editar, setEditar] = useState(false);
     const [codigo, setCodigo] = useState('');
-    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
     const [usuario, setUsuario] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
     const [showDialog, setShowDialog] = useState(<></>);
 
     const columns = [
         { field: 'id', headerName: 'Código', width: screenWidth * (0.15), type: 'number', },
-        { field: 'nome', headerName: 'Nome', width: screenWidth * (0.3) },
-        { field: 'email', headerName: 'Email', width: screenWidth * (0.3) },
+        { field: 'nome', headerName: 'Nome', width: screenWidth * (0.5) },
         { field: 'permissao', headerName: 'Administrador?', width: screenWidth * (0.2) },
     ];
 
@@ -37,27 +36,30 @@ export default function PCPUserPage(props) {
     }, [])
 
     async function showUsers() {
-        let data
         setLoading(true)
-        data = await getPCPUsers();
-        setLoading(false)
-        if (data) {
-            console.log(data)
-            const _rows = data.map(o => {
-                return {
-                    id: o.Id.value,
-                    nome: o.Nome.value,
-                    email: o.email,
-                    permissao: o.permissao == EnumPermissions.Admin ? 'Sim' : 'Não',
-                    metadata: { ...o }
+        await getPCPUsers().then(data => {
+            setLoading(false)
+            if (data) {
+                console.log(data)
+                const _rows = data.map(o => {
+                    return {
+                        id: o.Id.value,
+                        nome: o.Nome.value,
+                        senha: o.senha,
+                        permissao: o.permissao == EnumPermissions.Admin ? 'Sim' : 'Não',
+                        metadata: { ...o }
+                    }
+                })
+                setRows(_rows)
+            } else {
+                if (data.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
+                    showMeuAlert('Token de acesso ao Plune é inválido, contate o administrador', 'error')
                 }
-            })
-            setRows(_rows)
-        } else {
-            if (data.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
-                showMeuAlert('Token de acesso ao Plune é inválido, contate o administrador', 'error')
             }
-        }
+        }).catch(error => {
+            setLoading(false)
+            showMeuAlert(error.message, 'error')
+        })
     }
 
     async function handleSelectRow(el) {
@@ -65,7 +67,7 @@ export default function PCPUserPage(props) {
         let row = el.row
         setCodigo(row.id)
         setUsuario(row.nome)
-        setEmail(row.email)
+        setSenha(row.senha)
         setIsAdmin(row.metadata.permissao == EnumPermissions.Admin ? true : false)
         setEditar(true)
         setSelectedRow(row)
@@ -73,21 +75,21 @@ export default function PCPUserPage(props) {
 
     async function handleInvite(e) {
         e.preventDefault()
-        let enviarEmail = true;
-        if (email == selectedRow.email)
-            enviarEmail = false;
+        let enviarSenha = true;
+        if (senha == selectedRow.senha)
+            enviarSenha = false;
         const data = {
             UserPCPId: codigo,
             nome: usuario,
-            email,
+            senha,
             permissao: isAdmin ? EnumPermissions.Admin : EnumPermissions.Basic,
-            enviarEmail
+            enviarSenha
         }
         const doInvite = () => {
             console.log(data)
             setLoading(true)
             convidar(data).then(() => {
-                if (data.enviarEmail)
+                if (data.enviarSenha)
                     showMeuAlert('Convite enviado')
                 else
                     showMeuAlert('Registro atualizado')
@@ -99,7 +101,7 @@ export default function PCPUserPage(props) {
                 setLoading(false)
             })
         }
-        if (enviarEmail) {
+        if (enviarSenha) {
             setShowDialog(
                 <MeuDialog
                     open={true}
@@ -107,7 +109,7 @@ export default function PCPUserPage(props) {
                     title={'Envio do convite'}
                     confirm="Ok"
                     notConfirm="Cancelar"
-                    message={`Será enviado um email para o operador com o link de acesso.`}
+                    message={`Será enviado um senha para o operador com o link de acesso.`}
                     action={async () => doInvite()}>
                 </MeuDialog>
             )
@@ -160,7 +162,7 @@ export default function PCPUserPage(props) {
                     <form className="containerCadastro" autoComplete="off" onSubmit={handleInvite} >
                         <TextField className="field" id="standard-basic" label="Código" value={codigo} disabled /><br></br>
                         <TextField className="field" id="standard-basic" label="Nome" value={usuario} disabled /><br></br>
-                        <TextField className="field" id="standard-basic" label="Email" required value={email} onChange={e => { setEmail(e.target.value) }} type="email" /><br></br>
+                        <TextField className="field" id="standard-basic" label="Senha" type="password" required value={senha} onChange={e => { setSenha(e.target.value) }} /><br></br>
                         <FormControlLabel
                             control={
                                 <Checkbox
