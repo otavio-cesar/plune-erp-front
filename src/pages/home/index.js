@@ -12,7 +12,6 @@ import { stageSituation } from "../../util/constants";
 import QrReader from 'react-web-qr-reader';
 import { makeStyles } from '@material-ui/core/styles';
 import { FiLogOut, FiSettings } from "react-icons/fi";
-import { MeuDialog } from "../../components/dialog";
 import React from "react";
 
 const previewStyle = {
@@ -38,7 +37,6 @@ export default function HomePage(props) {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isLoggedUserAdmin, setIsLoggedUserAdmin] = useState(false);
-    const [showDialog, setShowDialog] = useState(<></>);
     const history = useHistory();
 
     const [open, setOpen] = useState(false);
@@ -54,9 +52,6 @@ export default function HomePage(props) {
     ];
 
     useEffect(() => {
-        // const query = new URLSearchParams(props.location.search); pulo do gato
-        // const token = query.get('token')
-        // console.log(token)
         const usuario = JSON.parse(localStorage.getItem('user'))
         if (usuario.permissao == EnumPermissions.Admin) {
             setIsLoggedUserAdmin(true)
@@ -148,27 +143,14 @@ export default function HomePage(props) {
     }
 
     async function logout() {
-        setShowDialog(
-            <MeuDialog
-                open={true}
-                setOpen={setShowDialog}
-                title={'Sair do sistema'}
-                confirm="Sim"
-                notConfirm="Cancelar"
-                message={`Deseja sair do sistema?`}
-                action={async () => {
-                    localStorage.removeItem("user");
-                    history.push('/login')
-                }}>
-            </MeuDialog>
-        )
+        localStorage.removeItem("user");
+        history.push('/login')
     }
 
     return (
         <>
             {showAlert}
             {loading && <Loading ></Loading>}
-            {showDialog}
 
             <Modal
                 open={open}

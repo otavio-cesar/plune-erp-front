@@ -1,23 +1,15 @@
-import { Button, Modal, Typography } from "@material-ui/core";
 import './styles.css';
 import { useEffect, useState } from "react";
 import { getOrdemById, getOrdens, getOrdensByLineProduction } from "../../../services/ordem";
 import { MeuAlerta } from "../../../components/meuAlerta";
 import { useHistory } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import { DataGrid } from '@material-ui/data-grid';
 import { viewPort } from "../../../util/responsive";
 import Loading from "../../../components/loading";
 import EnumPermissions from "../../../util/EnumPermissions";
 import { stageSituation } from "../../../util/constants";
 import { makeStyles } from '@material-ui/core/styles';
-import logo from '../../../assets/logo1.jpg';
-import { FiArrowLeft } from "react-icons/fi";
 import Header from "../../../components/header";
 
-const previewStyle = {
-    width: 320,
-}
 function getModalStyle() {
     return {
         top: '50%',
