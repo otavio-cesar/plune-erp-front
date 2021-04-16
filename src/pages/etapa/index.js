@@ -208,10 +208,12 @@ export default function EtapaPage(props) {
                 message={`Deseja apontar o refugo para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
                 labelQntProduction={`Quantidade de produtos refugados`}
                 askQntProduction
-                action={async (quantidade) => {
+                askObservacao
+                labelObservacao={'Observação'}
+                action={async (quantidade, observacao) => {
                     setLoading(true)
                     console.log(quantidade)
-                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, null, quantidade)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, null, quantidade, observacao)
                         .then(() => {
                             setLoading(false)
                             showMeuAlert('Refugo realizado', 'success')
@@ -279,7 +281,7 @@ export default function EtapaPage(props) {
                 situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
             )
             setEnableApontamento(
-                (situacao == stageSituation.paused.id || situacao == stageSituation.finished.id) && selectedRow.id != stageSituation.inspect.id
+                (situacao == stageSituation.started.id || situacao == stageSituation.paused.id) && selectedRow.id != stageSituation.inspect.id
             )
         } else {
             setEnableStart(false)

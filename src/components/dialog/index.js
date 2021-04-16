@@ -12,10 +12,12 @@ export function MeuDialog({
   open, title, message, action, setOpen,
   askReason, labelReason = "Motivo",
   askQntProduction, labelQntProduction = "Quantidade produzida na etapa",
+  askObservacao, labelObservacao = "Observação",
   confirm = "Sim", notConfirm = "Não"
 }) {
 
-  const [password, setPassword] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [obs, setObs] = useState('');
   const [state, setState] = React.useState({
     age: '',
     name: 'hai',
@@ -33,10 +35,8 @@ export function MeuDialog({
   const handleYes = () => {
     if (askReason) {
       action(state.age)
-    } else if (askQntProduction) {
-      action(password)
     } else {
-      action()
+      action(quantity, obs)
     }
     setOpen(!open);
   };
@@ -94,8 +94,26 @@ export function MeuDialog({
                   name: 'quantidadeProduzida',
                 }}
                 type='number'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                fullWidth
+              />
+            </>
+          }
+
+          {askObservacao &&
+            <>
+              <TextField
+                className="line"
+                id="standard-basic"
+                label={labelObservacao}
+                required
+                inputProps={{
+                  name: 'observacao',
+                }}
+                type='text'
+                value={obs}
+                onChange={(e) => setObs(e.target.value)}
                 fullWidth
               />
             </>

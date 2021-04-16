@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-d
 import DefaultRoute from "../components/defaultRoute/defaultRoute";
 // import EnumPermissions from "../util/EnumPermissions";
 import Loading from "../components/loading";
+import EnumPermissions from "../util/EnumPermissions";
 
 function Routes() {
     return (
@@ -28,16 +29,22 @@ function Routes() {
                         />
                         <DefaultRoute
                             exact
+                            roles={[EnumPermissions.Admin]}
+                            needUserLogged
                             path="/admin"
                             component={lazy(() => import("../pages/admin/home/index"))}
                         />
                         <DefaultRoute
                             exact
+                            roles={[EnumPermissions.Admin]}
                             path="/admin/pcp-users"
+                            needUserLogged
                             component={lazy(() => import("../pages/admin/pcp-users"))}
                         />
                         <DefaultRoute
                             exact
+                            roles={[EnumPermissions.Admin]}
+                            needUserLogged
                             path="/admin/token-plune"
                             component={lazy(() => import("../pages/admin/token-plune"))}
                         />

@@ -79,7 +79,7 @@ export default function HomePage(props) {
             }
             setLoading(false)
 
-            if (data.data) {
+            if (data?.data) {
                 console.log(data.data.row)
                 const _rows = data.data.row.map(o => {
                     return {
@@ -91,7 +91,7 @@ export default function HomePage(props) {
                 })
                 setRows(_rows)
             } else {
-                if (data.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
+                if (data?.includes("Erro ao inicializar Ultra::Session em Ultra::SOA#new: Login: Sessão expirou")) {
                     showMeuAlert('Token de acesso ao Plune é inválido, contate o administrador', 'error')
                 }
             }

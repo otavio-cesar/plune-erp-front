@@ -162,7 +162,7 @@ export default function PCPUserPage(props) {
                     <form className="containerCadastro" autoComplete="off" onSubmit={handleInvite} >
                         <TextField className="field" id="standard-basic" label="Código" value={codigo} disabled /><br></br>
                         <TextField className="field" id="standard-basic" label="Nome" value={usuario} disabled /><br></br>
-                        <TextField className="field" id="standard-basic" label="Senha" type="password" required value={senha} onChange={e => { setSenha(e.target.value) }} /><br></br>
+                        <TextField className="field" id="standard-basic" label="Senha" required value={senha} onChange={e => { setSenha(e.target.value) }} /><br></br>
                         <FormControlLabel
                             control={
                                 <Checkbox

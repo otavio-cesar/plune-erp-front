@@ -10,13 +10,13 @@ export async function getStagesByIdOrder(id) {
     return res.json()
 }
 
-export async function patchStageSituation(OrdemId, ProcessoId, ProdutoId, Status, MotivoParadaId = null, QuantidadeProduzida = null, QuantidadeInspecionada = null, QuantidadeRefugada = null) {
+export async function patchStageSituation(OrdemId, ProcessoId, ProdutoId, Status, MotivoParadaId = null, QuantidadeProduzida = null, QuantidadeInspecionada = null, QuantidadeRefugada = null, ObservacaoRefugo = null) {
     const res = await fetch(`${urlAPI}stage/pathStageSituation`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ OrdemId: OrdemId, ProcessoId: ProcessoId, ProdutoId: ProdutoId, Status: Status, MotivoParadaId: MotivoParadaId, QuantidadeProduzida: QuantidadeProduzida, QuantidadeInspecionada: QuantidadeInspecionada, QuantidadeRefugada: QuantidadeRefugada })
+        body: JSON.stringify({ OrdemId: OrdemId, ProcessoId: ProcessoId, ProdutoId: ProdutoId, Status: Status, MotivoParadaId: MotivoParadaId, QuantidadeProduzida: QuantidadeProduzida, QuantidadeInspecionada: QuantidadeInspecionada, QuantidadeRefugada: QuantidadeRefugada, ObservacaoRefugo: ObservacaoRefugo })
     })
     if (res.status == 201)
         return res.json()

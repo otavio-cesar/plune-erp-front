@@ -8,10 +8,10 @@ export default function DefaultRoute(props) {
         if (!needUserLogged) {
             return true;
         }
-        if (needUserLogged && localStorage.getItem("user")) {
+        if (needUserLogged && localStorage.getItem("user") && roles.length == 0) {
             return true
         }
-        if (roles.length > 0 && roles.includes(localStorage.getItem("user")?.permissao)) {
+        if (roles.length > 0 && roles.includes(JSON.parse(localStorage.getItem("user"))?.permissao)) {
             return true;
         }
         return false;
@@ -26,8 +26,8 @@ export default function DefaultRoute(props) {
                 permit ? (
                     <Component {...props} {...context} {...rest} />
                 ) : (
-                        <Redirect to={needUserLogged ? '/login' : '/'} />
-                    )
+                    <Redirect to={needUserLogged ? '/login' : '/'} />
+                )
             }
         />
     );
