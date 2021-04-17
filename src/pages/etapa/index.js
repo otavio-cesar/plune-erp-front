@@ -1,4 +1,4 @@
-import { Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import './styles.css';
 import { FiArrowLeft } from 'react-icons/fi';
 import { useEffect, useState } from "react";
@@ -253,6 +253,34 @@ export default function EtapaPage(props) {
         )
     }
 
+    async function handleInspecao() {
+        setShowDialog(
+            <MeuDialog
+                open={true}
+                setOpen={setShowDialog}
+                title={'Apontar produto'}
+                message={`Deseja apontar a inspeção para o produto: ${selectedRow.metadata.ProdutoId.resolved}?`}
+                labelQntProduction={`Quantidade de produtos inspecionados`}
+                askQntProduction
+                askYesNo
+                askObservacao
+                action={async (quantidade, observacao, aprovado) => {
+                    setLoading(true)
+                    console.log(quantidade, observacao, aprovado)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, null, null, null, quantidade, null, null, aprovado, observacao)
+                        .then(() => {
+                            setLoading(false)
+                            showMeuAlert('Produção realizada', 'success')
+                        })
+                        .catch(e => {
+                            setLoading(false)
+                            showMeuAlert(e.message, 'error')
+                        })
+                }}>
+            </MeuDialog>
+        )
+    }
+
     async function handleSelectRow(el) {
         console.log(el)
         setSelectedRow(el.row)
@@ -337,6 +365,9 @@ export default function EtapaPage(props) {
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => handleRefugoOrder()} disabled={!enableApontamento}>
                         Apontar Refugo
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={() => handleInspecao()} disabled={!enableApontamento}>
+                        Apontar Inspeção
                     </Button>
 
                 </div>

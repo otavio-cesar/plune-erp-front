@@ -4,7 +4,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
-import { InputLabel, makeStyles, TextField } from '@material-ui/core';
+import { InputLabel, TextField } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import React, { useState } from 'react';
 
@@ -13,13 +13,15 @@ export function MeuDialog({
   askReason, labelReason = "Motivo",
   askQntProduction, labelQntProduction = "Quantidade produzida na etapa",
   askObservacao, labelObservacao = "Observação",
+  askYesNo, labelYesNo = 'Aprovado',
   confirm = "Sim", notConfirm = "Não"
 }) {
 
   const [quantity, setQuantity] = useState('');
   const [obs, setObs] = useState('');
   const [state, setState] = React.useState({
-    age: '',
+    reason: '',
+    yesno: '',
     name: 'hai',
     quantidadeProduzida: 0
   });
@@ -34,9 +36,9 @@ export function MeuDialog({
 
   const handleYes = () => {
     if (askReason) {
-      action(state.age)
+      action(state.reason)
     } else {
-      action(quantity, obs)
+      action(quantity, obs, state.yesno)
     }
     setOpen(!open);
   };
@@ -61,14 +63,14 @@ export function MeuDialog({
 
           {askReason &&
             <>
-              <InputLabel htmlFor="age-native-simple" >{labelReason}:</InputLabel>
+              <InputLabel htmlFor="reason-native-simple" >{labelReason}:</InputLabel>
               <Select
                 native
-                value={state.age}
+                value={state.reason}
                 onChange={handleChange}
                 inputProps={{
-                  name: 'age',
-                  id: 'age-native-simple',
+                  name: 'reason',
+                  id: 'reason-native-simple',
                 }}
                 fullWidth
                 required
@@ -101,9 +103,39 @@ export function MeuDialog({
             </>
           }
 
+          {askYesNo &&
+            <>
+              <InputLabel
+                htmlFor="yesno-native-simple"
+                style={{ marginTop: '10px', transform: 'scale(0.75)' }}
+              >
+                {labelYesNo}*
+              </InputLabel>
+              <Select
+                native
+                value={state.yesno}
+                onChange={handleChange}
+                inputProps={{
+                  name: 'yesno',
+                  id: 'yesno-native-simple',
+                }}
+                fullWidth
+                required
+              >
+                <option aria-label="None" value="" />
+                {
+                  [{ value: 'Sim', id: true }, { value: 'Não', id: false }].map((s, i) => {
+                    return <option key={i} value={s.id}>{s.value}</option>
+                  })
+                }
+              </Select>
+            </>
+          }
+
           {askObservacao &&
             <>
               <TextField
+                style={{ marginTop: '10px' }}
                 className="line"
                 id="standard-basic"
                 label={labelObservacao}
