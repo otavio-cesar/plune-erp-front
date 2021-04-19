@@ -5,6 +5,7 @@ export async function getStagesByIdOrder(id) {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     return res.json()
@@ -17,6 +18,7 @@ export async function patchStageSituation(OrdemId, ProcessoId, ProdutoId, Status
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
         body: JSON.stringify({
             OrdemId: OrdemId, ProcessoId: ProcessoId, ProdutoId: ProdutoId,
@@ -36,6 +38,7 @@ export async function getPossibleStageSituation() {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     if (res.status == 200)

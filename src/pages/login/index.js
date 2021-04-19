@@ -1,7 +1,7 @@
 import { Button, Container, TextField } from "@material-ui/core";
 import './styles.css';
 import { useState } from "react";
-import { login } from "../../services/usuario";
+import { getToken, login } from "../../services/usuario";
 import { MeuAlerta } from "../../components/meuAlerta";
 import { useHistory } from 'react-router-dom';
 import Loading from '../../components/loading/index';
@@ -26,9 +26,11 @@ export default function LoginPage(props) {
 
         if (res.status == 200) {
             const user = await res.json()
-            const token = res.headers['token']
+            const token_pcp = await getToken()
+
+            debugger
             localStorage.setItem('user', JSON.stringify(user))
-            localStorage.setItem('token', token);
+            localStorage.setItem('token-pcp', user.token_pcp);
 
             await getPossibleStageSituation().then(res => {
                 console.log(res)
@@ -41,7 +43,7 @@ export default function LoginPage(props) {
                     })
                     localStorage.setItem("situations", JSON.stringify(situations))
                 }
-            }).catch(e=>console.log(e))
+            }).catch(e => console.log(e))
 
             if (user.permissao == EnumPermissao.Admin)
                 history.push('/admin');

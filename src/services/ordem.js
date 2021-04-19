@@ -6,6 +6,7 @@ export async function getOrdens() {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     if (res.status == 200)
@@ -19,6 +20,7 @@ export async function getOrdensByLineProduction(LinhaProcessoProdutivoIds) {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp"),
             LinhaProcessoProdutivoIds
         },
     })
@@ -33,6 +35,7 @@ export async function getOrdemById(id) {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     return res.json()
@@ -43,6 +46,7 @@ export async function patchRefugarOrdem(OrdemId, ProdutoId, QuantidadeRefugada) 
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
         body: JSON.stringify({ OrdemId: OrdemId, ProdutoId: ProdutoId, QuantidadeRefugada: QuantidadeRefugada })
     })

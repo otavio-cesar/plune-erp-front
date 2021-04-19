@@ -5,6 +5,7 @@ export async function login(username, password) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
         body: JSON.stringify({ username, password })
     })
@@ -16,6 +17,7 @@ export async function getPCPUsers() {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     if (res.status == 200)
@@ -29,6 +31,7 @@ export async function convidar({ UserPCPId, email, nome, permissao, enviarEmail 
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
         body: JSON.stringify({ UserPCPId, email, nome, permissao, enviarEmail })
     })
@@ -43,6 +46,7 @@ export async function alteraToken({ token }) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
         body: JSON.stringify({ token })
     })
@@ -57,6 +61,7 @@ export async function getToken() {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
         },
     })
     if (res.status == 200)
