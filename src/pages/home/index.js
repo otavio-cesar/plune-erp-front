@@ -101,7 +101,7 @@ export default function HomePage(props) {
         let row = el.row
         const situacao = row.metadata.Status.value
         if (situacao != stageSituation.waitingLiberation.id && situacao != stageSituation.cancelled.id)
-            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status,idEtapa:37})
+            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status})
         else
             showMeuAlert('Não existe ações para essa etapa', 'error')
     }
