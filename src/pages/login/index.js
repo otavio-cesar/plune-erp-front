@@ -28,7 +28,6 @@ export default function LoginPage(props) {
             const user = await res.json()
             const token_pcp = await getToken()
 
-            debugger
             localStorage.setItem('user', JSON.stringify(user))
             localStorage.setItem('token-pcp', user.token_pcp);
 

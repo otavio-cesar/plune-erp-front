@@ -101,7 +101,7 @@ export default function HomePage(props) {
         let row = el.row
         const situacao = row.metadata.Status.value
         if (situacao != stageSituation.waitingLiberation.id && situacao != stageSituation.cancelled.id)
-            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status })
+            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status,idEtapa:37})
         else
             showMeuAlert('Não existe ações para essa etapa', 'error')
     }
@@ -110,6 +110,7 @@ export default function HomePage(props) {
         console.log(data)
         if (data && !searchingOP) {
             let id = data.data.split('.')[3]
+            let idEtapa = data.data.split('.')[4]
             console.log(id)
             let ordem
             searchingOP = true
@@ -119,7 +120,7 @@ export default function HomePage(props) {
             if (ordem) {
                 let selectedOrdem = rows.find(o => o.id == id)
                 if (selectedOrdem) {
-                    history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status })
+                    history.push('/etapa', { idOrder: selectedOrdem.id, situacao: selectedOrdem.metadata.Status, idEtapa: idEtapa })
                 } else {
                     showMeuAlert(`A OP ${id} não está acessível`, 'error')
                 }
@@ -184,13 +185,13 @@ export default function HomePage(props) {
                         {isLoggedUserAdmin &&
                             <div className="labelOP">
                                 <Link to="/admin" className="engine-link" >
-                                    <FiSettings size={22} color="#3f51b5" />
+                                    <FiSettings size={22} color="#198179" />
                                 </Link>
                             </div>
                         }
                         <div className="labelOP">
                             <Link onClick={() => logout()} className="engine-link" >
-                                <FiLogOut size={22} color="#3f51b5" />
+                                <FiLogOut size={22} color="#198179" />
                             </Link>
                         </div>
 
@@ -200,6 +201,7 @@ export default function HomePage(props) {
                     <DataGrid
                         rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination
                         localeText={{
+                            noRowsLabel:"Nenhum registro",
                             columnMenuLabel: 'Menu',
                             columnMenuShowColumns: 'Mostrar colunas',
                             columnMenuFilter: 'Filtrar',

@@ -31,7 +31,7 @@ function Header() {
                 <Typography color="textPrimary">Token Plune</Typography>
             </Link>
             <Link onClick={() => logout()} className="link" >
-                <FiLogOut size={22} color="#3f51b5" />
+                <FiLogOut size={22} color="#198179" />
             </Link>
         </div>
     );

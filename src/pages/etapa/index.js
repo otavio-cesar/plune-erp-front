@@ -26,6 +26,7 @@ export default function EtapaPage(props) {
     const history = useHistory();
 
     const idOrder = props.location.state.idOrder
+    const idEtapa = props.location.state.idEtapa
     const statusOrder = props.location.state.situacao
 
     const columns = [
@@ -59,6 +60,9 @@ export default function EtapaPage(props) {
             }
         })
         setRows(_rows)
+        if (idEtapa) {
+            setSelectedRow(_rows.find(r => r.id == idEtapa))
+        }
     }
 
     async function handleStartStage() {
@@ -283,7 +287,7 @@ export default function EtapaPage(props) {
 
     async function handleSelectRow(el) {
         console.log(el)
-        setSelectedRow(el.row)
+        setSelectedRow(el.data)
     }
 
     useEffect(() => {
@@ -341,7 +345,7 @@ export default function EtapaPage(props) {
                     <div className="labelOP">
                         <div>
                             <Link to="/" className="back-link" >
-                                <FiArrowLeft size={16} color="#3f51b5" />
+                                <FiArrowLeft size={16} color="#198179" />
                             </Link>
                         </div>
                     </div>
@@ -355,7 +359,7 @@ export default function EtapaPage(props) {
                         Iniciar
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => handlePauseStage()} disabled={!enablePause}>
-                        Interromper
+                        Pausar
                     </Button>
                     <Button variant="contained" color="primary" onClick={() => handleFinishStage()} disabled={!enableFinish}>
                         Finalizar
@@ -371,8 +375,15 @@ export default function EtapaPage(props) {
                     </Button>
 
                 </div>
-                <div className="containerTable">
-                    <DataGrid rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination onCellClick={(el) => handleSelectRow(el)} />
+                <div className="containerTableEtapa">
+                    <DataGrid
+                        localeText={
+                            {
+                                noRowsLabel: "Nenhum registro",
+                                footerRowSelected: () => selectedRow ? "Etapa selecionada" : ""
+                            }
+                        }
+                        selectionModel={idEtapa ? [idEtapa] : []} rows={rows} columns={columns} hideFooterPagination onRowSelected={(el) => handleSelectRow(el)} />
                 </div>
             </div>
         </>

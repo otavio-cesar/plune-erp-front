@@ -13,8 +13,8 @@
     }
 }
 
-.containerTable {
-    height: 100%;
+.containerTableEtapa {
+    height: 80%;
     width: 100%;
 }
 
@@ -33,13 +33,23 @@
 }
 
 button {
-    width: 10vh !important;
-    font-size: 1.4vh !important;
-    background-color: "#17a99f" !important;
+    width: 7vh !important;
+    font-size: 1.3vh !important;
+    padding: 0;
 }
 
-.labelOP{
+.labelOP {
     align-self: center;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+@media (hover: none) {
+    .MuiDataGrid-root .MuiDataGrid-row:hover {
+        background-color: #cdcdcd !important;
+    }
+}
+
+.MuiDataGrid-root .MuiDataGrid-row.Mui-selected {
+    background-color: #cdcdcd !important;
 }
