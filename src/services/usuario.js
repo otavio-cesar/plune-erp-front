@@ -57,9 +57,12 @@ export async function alteraToken({ token }) {
 }
 
 export async function getToken() {
-    const res = await fetch(`https://api.linkedin.com/v2/emailAddress?oauth2_access_token=AQUynSRPE3-uuab1VkrxcLNhsn3ouiZ4G0w522ysQEhmw6HIkOYqmG6zOJ5iGgRX9RuOYcDINg3bUlrU4_mQ6NkSzYZ2QEqm0d8GN9qhNAN4kejKGga58LMATJbvtj_4bbpD-PY3jUWgr2YgrqrXJvD8hI-xKUsQJmKNrMPwV4e1YC4en1g_7eZCSKRID8ZsWkkTVD4vsw3SaGJMAf_-c920AxdtvPu1sNstFKZiqY3h2f8xK7A8tilo97YaH509nPl_eSSyIwRXXGXVSTPRGmG_EGnNO3XFIxNOA7iG5YHQLrSaVCuwGcJ8KWQNLEApIcskQTYqSx4tw61WvCW3w_xUHFpEyg&q=members&projection=(elements*(handle~))`, {
+    const res = await fetch(`${urlAPI}usuario/getToken`, {
         method: "GET",
-
+        headers: {
+            "Content-Type": "application/json",
+            "Token-PCP": localStorage.getItem("token-pcp")
+        },
     })
     if (res.status == 200)
         return res.json()
