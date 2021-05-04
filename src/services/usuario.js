@@ -26,14 +26,14 @@ export async function getPCPUsers() {
         throw new Error((await res.json()).message)
 }
 
-export async function convidar({ UserPCPId, email, nome, permissao, enviarEmail }) {
+export async function convidar({ UserPCPId, email, nome, permissao, senha }) {
     const res = await fetch(`${urlAPI}usuario/convidar`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Token-PCP": localStorage.getItem("token-pcp")
         },
-        body: JSON.stringify({ UserPCPId, email, nome, permissao, enviarEmail })
+        body: JSON.stringify({ UserPCPId, email, nome, permissao, senha })
     })
     if (res.status == 201)
         return res.json()

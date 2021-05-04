@@ -65,7 +65,7 @@ export default function LoginPage(props) {
                     <img src={logo} />
                 </div>
                 <form autoComplete="off" onSubmit={handleLogin} >
-                    <TextField className="line" id="standard-basic" label="Usuário/Email" required value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} />
+                    <TextField className="line" id="standard-basic" label="Usuário PCP" required value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} />
                     <TextField className="line" id="standard-basic" label="Senha" required type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <div className="line-botao">
                         <Button variant="contained" color="primary" type="submit">

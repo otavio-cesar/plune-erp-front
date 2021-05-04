@@ -68,6 +68,9 @@ export default function HomePage(props) {
                 const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
                 setLoading(true)
                 data = await getOrdensByLineProduction(LinhaProcessoProdutivoIds).catch(e => { showMeuAlert(e.message == 'Failed to fetch' ? 'Falha ao buscar dados' : e.message, 'error') });
+                if (data?.data?.row?.length > 0) {
+                    data.data.row = data.data.row.sort((a, b) => a.Id.value >= b.Id.value ? -1 : 1)
+                }
             } else {
                 setLoading(true)
                 data = await getOrdens();
@@ -101,7 +104,7 @@ export default function HomePage(props) {
         let row = el.row
         const situacao = row.metadata.Status.value
         if (situacao != stageSituation.waitingLiberation.id && situacao != stageSituation.cancelled.id)
-            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status})
+            history.push('/etapa', { idOrder: row.id, situacao: row.metadata.Status })
         else
             showMeuAlert('Não existe ações para essa etapa', 'error')
     }
@@ -201,7 +204,7 @@ export default function HomePage(props) {
                     <DataGrid
                         rows={rows} columns={columns} hideFooterSelectedRowCount hideFooterPagination
                         localeText={{
-                            noRowsLabel:"Nenhum registro",
+                            noRowsLabel: "Nenhum registro",
                             columnMenuLabel: 'Menu',
                             columnMenuShowColumns: 'Mostrar colunas',
                             columnMenuFilter: 'Filtrar',

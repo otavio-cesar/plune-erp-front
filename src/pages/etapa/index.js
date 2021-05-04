@@ -175,12 +175,14 @@ export default function EtapaPage(props) {
                 setOpen={setShowDialog}
                 title={'Inspecionar qualidade'}
                 message={`Deseja inspecionar a qualidade da ordem: ${selectedRow.metadata.OrdemId.resolved}?`}
-                labelQntProduction={'Quantidade de produtos com qualidade aprovada'}
-                askQntProduction
+                // labelQntProduction={'Quantidade de produtos com qualidade aprovada'}
+                // askQntProduction
                 action={async (quantidade) => {
+                    // ao iniciar etapa de inspecao nao pergunta quantidade
+                    quantidade = -1
                     setLoading(true)
                     console.log(quantidade)
-                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.finished.id, null, null, quantidade, null)
+                    await patchStageSituation(idOrder, selectedRow.metadata.ProcessoId.value, selectedRow.metadata.ProdutoId.value, stageSituation.started.id, null, null, quantidade, null)
                         .then((data) => {
                             console.log(data)
                             rows.forEach((el, i) => {
@@ -294,9 +296,11 @@ export default function EtapaPage(props) {
         enableActions()
     }, [selectedRow])
 
-    async function hasLineProductionPermission() {
+    function hasLineProductionPermission() {
         const LinhaProcessoProdutivoIds = JSON.parse(localStorage.getItem('user')).productionLine.map(p => p.value)
-        const hasPermission = LinhaProcessoProdutivoIds.includes[selectedRow.metadata.LinhaProcessoProdutivoId]
+        const hasPermission = LinhaProcessoProdutivoIds.includes(selectedRow.metadata.LinhaProcessoProdutivoId.value)
+        if (!hasPermission)
+            showMeuAlert(`Você tem permissão para a linha de produção: ${selectedRow.metadata.LinhaProcessoProdutivoId.resolved}`, 'error')
         return hasPermission
     }
 
@@ -304,16 +308,16 @@ export default function EtapaPage(props) {
         if ((selectedRow && statusOrder.value != stageSituation.finished.id) && hasLineProductionPermission()) {
             const situacao = selectedRow.metadata.Status.value
             setEnableStart(
-                (situacao == stageSituation.paused.id || situacao == stageSituation.freeToStart.id || selectedRow.id == stageSituation.inspect.id) && statusOrder.value == stageSituation.started.id
+                (situacao == stageSituation.paused.id || situacao == stageSituation.freeToStart.id) && statusOrder.value == stageSituation.started.id
             )
             setEnablePause(
-                situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
+                situacao == stageSituation.started.id
             )
             setEnableFinish(
-                situacao == stageSituation.started.id && selectedRow.id != stageSituation.inspect.id
+                situacao == stageSituation.started.id
             )
             setEnableApontamento(
-                (situacao == stageSituation.started.id || situacao == stageSituation.paused.id) && selectedRow.id != stageSituation.inspect.id
+                (situacao == stageSituation.started.id || situacao == stageSituation.paused.id)
             )
         } else {
             setEnableStart(false)

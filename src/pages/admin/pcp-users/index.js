@@ -75,24 +75,17 @@ export default function PCPUserPage(props) {
 
     async function handleInvite(e) {
         e.preventDefault()
-        let enviarSenha = true;
-        if (senha == selectedRow.senha)
-            enviarSenha = false;
         const data = {
             UserPCPId: codigo,
             nome: usuario,
             senha,
             permissao: isAdmin ? EnumPermissions.Admin : EnumPermissions.Basic,
-            enviarSenha
         }
         const doInvite = () => {
             console.log(data)
             setLoading(true)
             convidar(data).then(() => {
-                if (data.enviarSenha)
-                    showMeuAlert('Convite enviado')
-                else
-                    showMeuAlert('Registro atualizado')
+                showMeuAlert('Registro atualizado')
                 setEditar(false)
                 showUsers()
                 setLoading(false)
@@ -101,22 +94,7 @@ export default function PCPUserPage(props) {
                 setLoading(false)
             })
         }
-        if (enviarSenha) {
-            setShowDialog(
-                <MeuDialog
-                    open={true}
-                    setOpen={setShowDialog}
-                    title={'Envio do convite'}
-                    confirm="Ok"
-                    notConfirm="Cancelar"
-                    message={`Será enviado um senha para o operador com o link de acesso.`}
-                    action={async () => doInvite()}>
-                </MeuDialog>
-            )
-        } else {
-            doInvite()
-        }
-
+        doInvite()
     }
 
     function showMeuAlert(message, severity) {
